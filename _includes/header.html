@@ -3,8 +3,9 @@
   <center> <a href="/index.html"><div class="site-title">   {{site.title}} </div></a></center>
 </div> -->
 <br>
+<br>
 <div class="wrapper site-description">
-<center>  {{site.description}} </center>
+<center>  {{site.description}} 
 </div>
 <div class="wrapper">
   <div class="trigger site-navigation">
@@ -12,10 +13,10 @@
 
     {% for sitePage in site.pages %}
     {% if sitePage.title %}
-
     <span class="exclamationMark">/</span><a class="page-link" href="{{sitePage.url | prepend: site.baseurl }}">{{sitePage.title}}</a>
     {% endif %}
     {% endfor %}
   </div>
 </div>
+</center>
 <br>
