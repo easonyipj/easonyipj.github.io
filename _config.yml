@@ -13,7 +13,7 @@ baseurl: "" # the subpath of your site, e.g. /blog
 url: "https://easonyipj.github.io/" # the base hostname & protocol for your site
 github_username:  easonyipj
 paginate: 5
-theme-dark: true #Set to true to change to dark website theme
+theme-dark: false #Set to true to change to dark website theme
 plugins: [jekyll-paginate, kramdown]
 # Build settings
 markdown: kramdown
