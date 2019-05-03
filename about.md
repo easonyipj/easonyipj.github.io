@@ -5,15 +5,10 @@ permalink: /about/
 ---
 
 <h2>About me</h2>
-<p>Minimal, text based, liberal Jekyll theme<br>for sharing your awesome ideas.</p>
+<p>不专业的程序员, 专业的键盘侠<br>Junior in UESTC</p>
 <br>
-<center><p ><strong><span class="manual">Get up and running with</span> Gravity</strong></p></center>
-<br>
-<div class="manual-post">
-  <div class="manual manual-title">
-  <strong>Posting</strong>
-  </div>
-<p>  <div class="manual-content">
+<center><p ><strong><span class="manual">无人及我 你怎么说K歌之王是我</span> Gravity</strong></p></center>
+
 
 
 
