@@ -9,13 +9,13 @@
  */
 $l-text-color:       #111;
 $l-link-color:       #aaa;
-$l-background-color: #aaf1d0;
+$l-background-color: #ffb06f;
 $l-brand-color:      #2a7ae2;
 $l-grey-color:       #828282;
 $l-grey-color-light: lighten($l-grey-color, 40%);
 $l-grey-color-dark:  darken($l-grey-color, 25%);
 $l-code: #EEF;
-$l-crimson: #DC143C;
+$l-crimson: rgb(0, 0, 0);
 $l-nav: $l-link-color;
 $l-page: $l-link-color;
 
