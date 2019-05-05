@@ -16,13 +16,13 @@ author: "easonyi"
 
 ### 配置域名步骤
 * 前往GitHub Repository Settings
-![settings](pictures/settings.PNG)
+![settings](http://yipingjian.top/pictures/settings.PNG)
 
 * 修改Custom domain为你的域名
-![domain](pictures/domain.PNG)
+![domain](http://yipingjian.top/pictures/domain.PNG)
 
 * 在域名管理页面添加记录
-![记录](pictures/记录.PNG)
+![记录](http://yipingjian.top/pictures/记录.PNG)
 
 * 获取记录值
 
