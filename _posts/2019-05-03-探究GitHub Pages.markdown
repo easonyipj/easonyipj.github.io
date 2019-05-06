@@ -1,6 +1,6 @@
 ---
 layout: post
-title:  "始"
+title:  "GitHub Pages Quick Start"
 date:   2019-05-03 19:45:31 +0530
 categories: GitHub
 author: "easonyi"
