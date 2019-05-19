@@ -1,6 +1,6 @@
 ---
 layout: post
-title:  "2019-05-18-记一次Linux内核参数debug"
+title:  "记一次Linux内核参数debug"
 date:   2019-05-18 16:45:31 +0530
 categories: Linux 
 author: "easonyi"
