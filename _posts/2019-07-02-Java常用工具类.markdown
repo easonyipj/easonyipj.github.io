@@ -1,3 +1,10 @@
+---
+layout: post
+title:  "Java常用工具类"
+date:   2019-07-02 19:45:31 +0530
+categories: Java
+author: "easonyi"
+---
 
 + ##### [org.apache.commons.lang3.StringUtils](https://commons.apache.org/proper/commons-lang/javadocs/api-3.6/org/apache/commons/lang3/StringUtils.html)
 ![stringutils](http://yipingjian.top/pictures/stringutils.png)
