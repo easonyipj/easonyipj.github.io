@@ -1,0 +1,182 @@
+---
+layout: post
+title:  "HTTP请求加签"
+date:   2019-05-18 16:45:31 +0530
+categories: HTTP 
+author: "easonyi"
+---
+### 一、概念
+HTTP请求加签是指客户端在HTTP请求的消息体中加入“签名字段”，服务端收到请求后，根据相同的加签方式对请求体内容进行加签，比较客户端和服务端的签名，检验请求的合法性等等。
+```json
+{
+"random":"c410735c96a84e6c8c5ba04f708e1d07",
+"sign":"8cc0c3224c6f365b9250fb41984b374d",
+"measures":"8821",
+"measureState":"1",
+"shopName":"阿波罗男子医院",
+"shopId":"141433488",
+}
+```
+### 二、加签方法示例
++ 客户端
+1. 获取appKey
+2. 获取32位随机uuid并放入消息体中
+3. 将消息体的所有属性和值拼接成字符串，字符串末尾拼接appKey
+4. 将所得字符串MD5加密生成sign
+5. 将sign放入消息体中发送
+
+```java
+// 加签主方法
+private String addSign(String json) {                                                                                                                                                                 
+    try {                                                                                                 
+        JSONObject jsonObject = JSONObject.parseObject(json);                                             
+        jsonObject.put(RANDOM, UUID.randomUUID().toString().replace("-", ""));  
+      	// SAAS_APPKEY 为appKey
+        jsonObject.put(SIGN, SignDataUtil.genSignData(SAAS_APPKEY, jsonObject));                          
+                                                                                                          
+        return JSONObject.toJSONString(jsonObject);                                                       
+    } catch (Exception e) {                                                                               
+        LOGGER.error("加签失败");                                                                             
+        return json;                                                                                      
+    }                                                                                                     
+}
+
+/**
+ * 加签工具类
+ * @author yipingjian
+ * @version 1.0
+ * @date 2019-06-10
+ */
+public class SignDataUtil {
+
+    /**
+     * 生成待签名串
+     * @param jsonObject
+     * @return
+     */
+    private static String genSignSrcData(JSONObject jsonObject) {
+        StringBuffer content = new StringBuffer();
+
+        // 按照key做首字母升序排列
+        List<String> keys = new ArrayList<>(jsonObject.keySet());
+        Collections.sort(keys, String.CASE_INSENSITIVE_ORDER);
+        for (int i = 0; i < keys.size(); i++) {
+            String key = (String) keys.get(i);
+            // sign不参与签名
+            if ("sign".equals(key)) {
+                continue;
+            }
+            String value = (String) jsonObject.getString(key);
+            // 空串不参与签名
+            if (null == value) {
+                continue;
+            }
+            content.append((i == 0 ? "" : "&") + key + "=" + value);
+
+        }
+        String signSrc = content.toString();
+        if (signSrc.startsWith("&")) {
+            signSrc = signSrc.replaceFirst("&", "");
+        }
+        return signSrc;
+    }
+
+    public static String genSignData(String appkey,JSONObject params) throws Exception {
+        String signSrc = genSignSrcData(params);
+        signSrc += "&key=" + appkey;
+        return Md5Algorithm.getInstance().md5Digest(signSrc.getBytes(StandardCharsets.UTF_8));
+    }
+
+}
+
+
+
+/** MD5加密工具类
+ *
+ * @author yipingjian
+ * @version 1.0
+ * @date 2019-06-10
+ */
+public class Md5Algorithm {
+
+    private static Md5Algorithm instance;
+
+    private final static String[] hexDigits = { "0", "1", "2", "3", "4", "5",
+            "6", "7", "8", "9", "a", "b", "c", "d", "e", "f" };
+
+    private Md5Algorithm(){
+
+    }
+
+    public static Md5Algorithm getInstance(){
+        if(null == instance)
+            return new Md5Algorithm();
+        return instance;
+    }
+
+    /**
+     * 转换字节数组为16进制字串
+     * @param b 字节数组
+     * @return 16进制字串
+     */
+    private String byteArrayToHexString(byte[] b) {
+        StringBuffer resultSb = new StringBuffer();
+        for (int i = 0; i < b.length; i++) {
+            resultSb.append(byteToHexString(b[i]));
+        }
+        return resultSb.toString();
+    }
+
+    /**
+     * 转换字节数组为高位字符串
+     * @param b 字节数组
+     * @return
+     */
+    private String byteToHexString(byte b) {
+        int n = b;
+        if (n < 0)
+            n = 256 + n;
+        int d1 = n / 16;
+        int d2 = n % 16;
+        return hexDigits[d1] + hexDigits[d2];
+    }
+
+    /**
+     * MD5 摘要计算(byte[]).
+     * @param src byte[]
+     * @throws Exception
+     * @return String
+     */
+    public String md5Digest(byte[] src) {
+        MessageDigest alg;
+        try {
+            // MD5 is 32 bit message digest
+            alg = MessageDigest.getInstance("MD5");
+        } catch (NoSuchAlgorithmException e) {
+            return null;
+        }
+        return byteArrayToHexString(alg.digest(src));
+    }
+
+}
+```
++ 服务端
+1. 获取HTTP请求
+2. 将消息体的所有属性（除了sign）和值拼接成字符串，字符串末尾拼appKey
+3. 将所得字符串MD5加密生成sign
+4. 比较sign和请求消息体中的sign
+
+
+### 三、作用
+一般来说，HTTP请求加签有以下几个作用
+
+1. 检验参数是否被篡改、来源是否合法
+
+appKey并不参与网络传输，第三方无法获取appKey，所以就算请求被拦截并篡改参数后，由于缺少appKey，导致生成的sign与服务端生成的sign不匹配，会被服务端拒绝。
+
+2. 检验超时请求、请求唯一性
+
+在请求体中加入timestamp属性，记录请求发送时间，并加入sign的计算中，服务端收到请求后，可根据请求体中的timestamp判断是否超时。同样因为第三方无法获取appKey，所以即使第三方获取完整的请求并在超时时间外再次发送，也会因为超时时间的限制而被拒绝。
+
+
+

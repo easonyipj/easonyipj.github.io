@@ -1,0 +1,53 @@
+
++ ##### [org.apache.commons.lang3.StringUtils](https://commons.apache.org/proper/commons-lang/javadocs/api-3.6/org/apache/commons/lang3/StringUtils.html)
+![stringutils](http://yipingjian.top/pictures/stringutils.png)
+
++ ##### [org.springframework.util.CollectionUtils]()
+![cutils](http://yipingjian.top/pictures/cutils.png)
+
++ ##### [com.google.common.base.Splitter](https://guava.dev/releases/23.0/api/docs/com/google/common/base/Splitter.html)
+![splitter](http://yipingjian.top/pictures/splitter.png)
+```java
+// 使用示例
+// 返回iterable ["a", "b", "c"]
+Splitter.on(',').omitEmptyStrings().split(",a,,,b,c,,") 
+// 返回["","a","","","b","c","",""]
+Splitter.on(',').on(',').splitToList(",a,,,b,c,,")  
+```
+
++ ##### [com.google.common.base.Joiner](https://guava.dev/releases/16.0/api/docs/com/google/common/base/Joiner.html)
+![joiner](http://yipingjian.top/pictures/joiner.png)
+```java
+// 使用示例
+// 返回字符串"Harry; Ron; Hermione"
+Joiner joiner = Joiner.on("; ").skipNulls();
+return joiner.join("Harry", null, "Ron", "Hermione");
+```
+
++ ##### [java.util.Optional](https://docs.oracle.com/javase/8/docs/api/java/util/Optional.html)
+![optional](http://yipingjian.top/pictures/optional.png)
+```java
+// 使用示例
+Optional<Object> result = Optional.ofNullable(m.invoke(this));
+body.put(fieldname, result.orElse(""));
+```
+
++ ##### [com.google.common.collect.Lists](https://guava.dev/releases/22.0/api/docs/com/google/common/collect/Lists.html)
+![lists](http://yipingjian.top/pictures/lists.png)
+
+##总结
+以上是在最近的开发中用到的工具类，上面的内容会持续更新。之前在开发的时候，经常会手动写一些代码或者用原生的jdk代码来进行诸如判空、判null，字符串的拆分、拼接等操作，较少使用到开源的工具类，今后在开发过程中，要注意开源工具类的使用，特别是[Google Guava](http://ifeve.com/google-guava/)的开源工具包，提高代码的整洁性。
+今天在学习Java开源工具类的时候，看到了使用一个开源工具类的注意事项:
+> 尽量使用隐藏实现
+在使用第三方开源工具类时，尽量先自己定义一个工具类，然后在自己定义的工具类中使用第三方工具类。避免在业务代码中直接使用第三方工具类，防止调整业务规则时需要修改大量代码。
+比如下面这个判断字符串是否为空或者null的工具类，如果我们在业务代码中直接使用org.apache.commons.lang3.StringUtils.isEmpty，后期需要调整成如果全部是空格的时候也会返回true，那么我们需要在业务代码中使用到这个工具类的地方一个个改成org.apache.commons.lang3.StringUtils.isBlank。如果我们在自己的工具类中引用第三方工具类，业务代码引用自己定义的工具类，我们只需要修改自己业务代码中引用的工具类。
+```java
+/**
+ *在自己定义的工具类中使用第三方工具类，业务代码调用自己定义的工具类
+ *@param str 
+ *@return 比较结果
+*/
+public static boolean isEmpty(String str) {
+  return org.apache.commons.lang3.StringUtils.isEmpty(str);
+}
+```
